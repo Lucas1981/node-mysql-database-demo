@@ -25,7 +25,7 @@ class Users {
     return this.db.createRecord(table, attributes);
   }
 
-  readUsers({ identifiers = null, columns = null } = {}) {
+  readUsers({ identifiers, columns } = { identifiers: null, columns: null }) {
     return this.db.readRecords({
       table,
       ...(identifiers === null ? {} : { identifiers }),
