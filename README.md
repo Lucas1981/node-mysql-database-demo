@@ -33,7 +33,7 @@ Where `id` is the primary auto-incrementing key
 
 The mysql node package already provides some great functionality for generating prepared statements. The only hard one to tackle is to get them in for `WHERE ?? = ? AND ?? = ?` type identifiers, having to go over an object yourself and translating the identifiers into an array and keeping track of how many `AND ?? = ?` insertions you need. Feels messy, I wonder if that can be done more efficiently.
 
-I also don't like that if you want to do `SELECT * FROM users` or `SELECT 'firstname', 'lastname' FROM users`, you seem to need a different interpolation symbol (either `??` or `?`) for either cases. Would be nice if that could be flattened, not having to pollute de Db.js with a line like `let queryString = `SELECT ${columns === ALL_FUNC ? '?' : '??'} FROM ?? WHERE `;`.
+I also don't like that if you want to do `SELECT * FROM users` or `SELECT 'firstname', 'lastname' FROM users`, you seem to need a different interpolation symbol (either `??` or `?`) for either cases. Would be nice if that could be flattened, not having to pollute de Db.js with a line like `let queryString = ``SELECT ${columns === ALL_FUNC ? '?' : '??'} FROM ?? WHERE ``;`.
 
 The way the queries are assembled also feels a little too strict now, it could be probably better cut up into modules, where functions only return snippets like the command, columns, set values or identifiers, building up the query string bit by bit. Finally, error handling is poor at best right now.
 
