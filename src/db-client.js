@@ -12,8 +12,10 @@ try {
 async function main() {
   const usersTable = await new Table(table, config);
   console.log("Established database connection");
+
   const initialUsers = await usersTable.read();
   console.log("\nAll users");
+  
   console.log(initialUsers);
   const createdUser = await usersTable.create({
     firstname: "John",
