@@ -3,7 +3,7 @@
 */
 
 const mysql = require('mysql');
-const ALL_FUNC = { toSqlString: () => '*' };
+const SimpleQueryBuilder = require('./SimpleQueryBuilder.js');
 
 class Db {
 
@@ -18,37 +18,39 @@ class Db {
   }
 
   createRecord(table, values) {
-    return this.runQuery(
-      "INSERT INTO ?? SET ?", [table, values]
-    );
+    const query = new SimpleQueryBuilder()
+      .insert()
+      .into(table)
+      .set(values);
+
+    return this.runQuery(query.getQuery());
   }
 
-  readRecords({ table, columns = ALL_FUNC, identifiers = 1 }) {
-    /* An array of values cannot seem to handle a single entry of objects with a toSqlString property */
-    let queryString = `SELECT ${columns === ALL_FUNC ? '?' : '??'} FROM ?? WHERE `;
-    let processedIdentifiers = [1];
-    if(identifiers !== 1) {
-      let { string, values } = this.prepareIdentifiers(identifiers);
-      queryString += string;
-      processedIdentifiers = values;
-    } else {
-      queryString += '?';
-    }
-    return this.runQuery(
-      queryString, [columns, table, ...processedIdentifiers]
-    );
+  readRecords({ table, columns = '*', identifiers = 1 }) {
+    const query = new SimpleQueryBuilder()
+      .select(columns)
+      .from(table)
+      .where(identifiers);
+
+    return this.runQuery(query.getQuery());
   }
 
   updateRecords(table, values, identifiers) {
-    return this.runQuery(
-      "UPDATE ?? SET ? WHERE ?", [table, values, identifiers]
-    );
+    const query = new SimpleQueryBuilder()
+      .update(table)
+      .set(values)
+      .where(identifiers);
+
+    return this.runQuery(query.getQuery());
   }
 
   deleteRecord(table, identifiers) {
-    return this.runQuery(
-      "DELETE FROM ?? WHERE ?", [table, identifiers]
-    );
+    const query = new SimpleQueryBuilder()
+      .delete()
+      .from(table)
+      .where(identifiers);
+
+    return this.runQuery(query.getQuery());
   }
 
   close() {
@@ -57,35 +59,13 @@ class Db {
 
   /* Helper functions */
 
-  runQuery(query, inserts) {
+  runQuery({ string, values }) {
     return new Promise((resolve, reject) => {
-      this.con.query(query, inserts, (err, results, fields) => {
+      this.con.query(string, values, (err, results, fields) => {
         if (err) reject(err);
         resolve(results);
       });
     });
-  }
-
-  prepareIdentifiers(identifiers) {
-    let string = '';
-    let first = true;
-    const values = [];
-
-    for(const key of Object.keys(identifiers)) {
-      if(first) {
-        string += '?? = ? ';
-        first = false;
-      } else {
-        string += 'AND ?? = ? ';
-      }
-      values.push(key);
-      values.push(identifiers[key]);
-    }
-
-    return {
-      string,
-      values
-    };
   }
 
 }

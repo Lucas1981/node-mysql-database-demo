@@ -5,11 +5,11 @@
 */
 
 const Db = require('./Db.js');
-const table = 'users';
 const all = '*';
 
-class Users {
-  constructor(config) {
+class Table {
+  constructor(table, config) {
+    this.table = table;
     return new Promise((resolve, reject) => {
       const dbPromise = new Db(config);
       dbPromise.then(db => {
@@ -21,24 +21,24 @@ class Users {
     });
   }
 
-  createUser(attributes) {
-    return this.db.createRecord(table, attributes);
+  create(attributes) {
+    return this.db.createRecord(this.table, attributes);
   }
 
-  readUsers({ identifiers, columns } = { identifiers: null, columns: null }) {
+  read({ identifiers, columns } = { identifiers: null, columns: null }) {
     return this.db.readRecords({
-      table,
+      table: this.table,
       ...(identifiers === null ? {} : { identifiers }),
       ...(columns === null ? {} : { columns })
     });
   }
 
-  updateUser(id, newAttributes) {
-    return this.db.updateRecords(table, newAttributes, { id });
+  update(id, newAttributes) {
+    return this.db.updateRecords(this.table, newAttributes, { id });
   }
 
-  deleteUser(id) {
-    return this.db.deleteRecord(table, { id });
+  delete(id) {
+    return this.db.deleteRecord(this.table, { id });
   }
 
   close() {
@@ -46,4 +46,4 @@ class Users {
   }
 
 }
-module.exports = Users;
+module.exports = Table;

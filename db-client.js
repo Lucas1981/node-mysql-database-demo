@@ -1,5 +1,6 @@
-const Users = require('./Users.js');
+const Table = require('./Table.js');
 const config = require('./db-config.json');
+const table = 'users';
 
 try {
   main();
@@ -9,41 +10,41 @@ try {
 }
 
 async function main() {
-  const db = await new Users(config);
+  const usersTable = await new Table(table, config);
   console.log("Established database connection");
-  const initialUsers = await db.readUsers();
+  const initialUsers = await usersTable.read();
   console.log("\nAll users");
   console.log(initialUsers);
-  const createdUser = await db.createUser({
+  const createdUser = await usersTable.create({
     firstname: "John",
     lastname: "Dee"
   });
-  const users = await db.readUsers();
+  const users = await usersTable.read();
   console.log("\nAll users after creating new user");
   console.log(users);
 
-  const john = (await db.readUsers({
+  const john = (await usersTable.read({
     identifiers: { firstname: 'John', lastname: 'Dee' }
   }))[0];
   console.log("\nSelected user with attributes { firstname: 'John', lastname: 'Dee' }");
   console.log(john);
 
-  const adjustedUser = await db.updateUser(john.id, { lastname: 'Doe' });
-  const updatedUsers = await db.readUsers();
+  const adjustedUser = await usersTable.update(john.id, { lastname: 'Doe' });
+  const updatedUsers = await usersTable.read();
   console.log("\nAll users after updating user");
   console.log(updatedUsers);
 
-  const firstNames = await db.readUsers({
+  const firstNames = await usersTable.read({
     columns: ['firstname', 'lastname']
   });
   console.log("\nAll firstnames and lastnames of the current users");
   console.log(firstNames);
 
-  const deletedUser = await db.deleteUser(john.id);
-  const allUsersAfterDelete = await db.readUsers();
+  const deletedUser = await usersTable.delete(john.id);
+  const allUsersAfterDelete = await usersTable.read();
   console.log("\nAll users after deleting user");
   console.log(allUsersAfterDelete);
 
-  db.close();
+  usersTable.close();
   console.log("\nClosed database connection");
 }
