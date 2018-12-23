@@ -12,8 +12,10 @@ try {
 async function main() {
   const usersTable = await new Table(table, config);
   console.log("Established database connection");
+
   const initialUsers = await usersTable.read();
   console.log("\nAll users");
+
   console.log(initialUsers);
   const createdUser = await usersTable.create({
     firstname: "John",
@@ -34,11 +36,11 @@ async function main() {
   console.log("\nAll users after updating user");
   console.log(updatedUsers);
 
-  const firstNames = await usersTable.read({
+  const fullNames = await usersTable.read({
     columns: ['firstname', 'lastname']
   });
   console.log("\nAll firstnames and lastnames of the current users");
-  console.log(firstNames);
+  console.log(fullNames);
 
   const deletedUser = await usersTable.delete(john.id);
   const allUsersAfterDelete = await usersTable.read();
