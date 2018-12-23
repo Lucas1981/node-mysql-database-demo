@@ -1,6 +1,6 @@
 /**
 * This is a simple implementation of the Db class. At first I thought about extending it,
-* but in fact it is better to use composition so as to hide all the Db methods that we
+* but in fact it is better to use composition so as to hide the Db methods that we
 * don't use from the implementing class.
 */
 
@@ -25,12 +25,8 @@ class Table {
     return this.db.createRecord(this.table, attributes);
   }
 
-  read({ identifiers, columns } = { identifiers: null, columns: null }) {
-    return this.db.readRecords({
-      table: this.table,
-      ...(identifiers === null ? {} : { identifiers }),
-      ...(columns === null ? {} : { columns })
-    });
+  read(args = {}) {
+    return this.db.readRecords(this.table, args);
   }
 
   update(id, newAttributes) {

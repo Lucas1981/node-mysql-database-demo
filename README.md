@@ -17,7 +17,7 @@ The config is set in the db-config.json file, like so:
 }
 ```
 
-Running the db-cli.js will read all records from your database, create a new record, update that record, and finally delete it. In between it will also read records based on identifiers and will return only specified columns. The db-cli.js relies on async/await handling of promises so it can all be performed in one nice list. It assumes your `users` table uses this schema:
+Running the `db-client.js` will read all records from your database, create a new record, update that record, and finally delete it. In between it will also read records based on identifiers and will return only specified columns. The db-cli.js relies on async/await handling of promises so it can all be performed in one nice list. It assumes your `users` table uses this schema:
 
 ```
 {
@@ -37,6 +37,6 @@ The way the queries are built up are a little nice and modular now. You can buil
 
 Error handling is poor at best right now.
 
-The Db and Users classes actually return a promise in their constructor, but when this promise resolves, the `this` instance of the class is passed back. So in the `then(db => { /* Do something with db instance */ })` of the promise that the constructor returns, you should find the instance. The `db-cli.js` actually receives it with an `await`.
+The Db and Users classes actually return a promise in their constructor, but when this promise resolves, the `this` instance of the class is passed back. So in the `then(db => { /* Do something with db instance */ })` of the promise that the constructor returns, you should find the instance. The `db-client.js` actually receives it with an `await`.
 
 Runs on Node v11.4.0

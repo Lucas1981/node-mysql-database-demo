@@ -26,7 +26,7 @@ class Db {
     return this.runQuery(query.getQuery());
   }
 
-  readRecords({ table, columns = '*', identifiers = 1 }) {
+  readRecords(table, { columns = '*', identifiers = 1 }) {
     const query = new SimpleQueryBuilder()
       .select(columns)
       .from(table)
