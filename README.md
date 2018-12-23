@@ -35,7 +35,9 @@ The mysql node package already provides some great functionality for generating 
 
 I also don't like that if you want to do `SELECT * FROM users` or `SELECT 'firstname', 'lastname' FROM users`, you seem to need a different interpolation symbol (either `??` or `?`) for either cases. Would be nice if that could be flattened, not having to pollute de Db.js with a line like ``let queryString = `SELECT ${columns === ALL_FUNC ? '?' : '??'} FROM ?? WHERE `;``.
 
-The way the queries are assembled also feels a little too strict now, it could be probably better cut up into modules, where functions only return snippets like the command, columns, set values or identifiers, building up the query string bit by bit. Finally, error handling is poor at best right now.
+The way the queries are assembled also feels a little too strict now, it could be probably better cut up into modules, where functions only return snippets like the command, columns, set values or identifiers, building up the query string bit by bit.
+
+Error handling is poor at best right now.
 
 The Db and Users classes actually return a promise in their constructor, but when this promise resolves, the `this` instance of the class is passed back. So in the `then(db => { /* Do something with db instance */ })` of the promise that the constructor returns, you should find the instance. The `db-cli.js` actually receives it with an `await`.
 
