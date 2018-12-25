@@ -4,42 +4,51 @@
 * don't use from the implementing class.
 */
 
-const Db = require('./Db.js');
+const SimpleQueryBuilder = require('./SimpleQueryBuilder');
 const all = '*';
 
 class Table {
-  constructor(table, config) {
+  constructor(table, db) {
+    this.db = db;
     this.table = table;
-    return new Promise((resolve, reject) => {
-      const dbPromise = new Db(config);
-      dbPromise.then(db => {
-        this.db = db;
-        resolve(this);
-      }).catch(err => {
-        reject(err);
-      });
-    });
   }
 
-  create(attributes) {
-    return this.db.createRecord(this.table, attributes);
+  create(values) {
+    const query = new SimpleQueryBuilder()
+      .insert()
+      .into(this.table)
+      .set(values);
+
+    return this.db.runQuery(query.getQuery());
   }
 
-  read(args = {}) {
-    return this.db.readRecords(this.table, args);
+  read({ columns = '*', identifiers = 1 } = { columns: '*', identifiers: 1}) {
+    const query = new SimpleQueryBuilder()
+      .select(columns)
+      .from(this.table)
+      .where(identifiers);
+
+    return this.db.runQuery(query.getQuery());
   }
 
-  update(id, newAttributes) {
-    return this.db.updateRecords(this.table, newAttributes, { id });
+  update(identifiers, values) {
+    const query = new SimpleQueryBuilder()
+      .update(this.table)
+      .set(values)
+      .where(identifiers);
+
+    return this.db.runQuery(query.getQuery());
   }
 
-  delete(id) {
-    return this.db.deleteRecord(this.table, { id });
-  }
+  delete(identifiers) {
+    const query = new SimpleQueryBuilder()
+      .delete()
+      .from(this.table)
+      .where(identifiers);
 
-  close() {
-    return this.db.close();
+    return this.db.runQuery(query.getQuery());
   }
 
 }
+
 module.exports = Table;

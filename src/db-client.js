@@ -1,3 +1,4 @@
+const Db = require('./Db.js');
 const Table = require('./Table.js');
 const config = require('./db-config.json');
 const table = 'users';
@@ -10,7 +11,8 @@ try {
 }
 
 async function main() {
-  const usersTable = await new Table(table, config);
+  const db = await new Db(config);
+  const usersTable = new Table(table, db);
   console.log("Established database connection");
 
   const initialUsers = await usersTable.read();
@@ -31,7 +33,7 @@ async function main() {
   console.log("\nSelected user with attributes { firstname: 'John', lastname: 'Dee' }");
   console.log(john);
 
-  const adjustedUser = await usersTable.update(john.id, { lastname: 'Doe' });
+  const adjustedUser = await usersTable.update({ id: john.id }, { lastname: 'Doe' });
   const updatedUsers = await usersTable.read();
   console.log("\nAll users after updating user");
   console.log(updatedUsers);
@@ -42,11 +44,11 @@ async function main() {
   console.log("\nAll firstnames and lastnames of the current users");
   console.log(fullNames);
 
-  const deletedUser = await usersTable.delete(john.id);
+  const deletedUser = await usersTable.delete({ id: john.id });
   const allUsersAfterDelete = await usersTable.read();
   console.log("\nAll users after deleting user");
   console.log(allUsersAfterDelete);
 
-  usersTable.close();
+  db.close();
   console.log("\nClosed database connection");
 }

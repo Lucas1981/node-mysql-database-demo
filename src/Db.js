@@ -17,47 +17,9 @@ class Db {
     });
   }
 
-  createRecord(table, values) {
-    const query = new SimpleQueryBuilder()
-      .insert()
-      .into(table)
-      .set(values);
-
-    return this.runQuery(query.getQuery());
-  }
-
-  readRecords(table, { columns = '*', identifiers = 1 }) {
-    const query = new SimpleQueryBuilder()
-      .select(columns)
-      .from(table)
-      .where(identifiers);
-
-    return this.runQuery(query.getQuery());
-  }
-
-  updateRecords(table, values, identifiers) {
-    const query = new SimpleQueryBuilder()
-      .update(table)
-      .set(values)
-      .where(identifiers);
-
-    return this.runQuery(query.getQuery());
-  }
-
-  deleteRecord(table, identifiers) {
-    const query = new SimpleQueryBuilder()
-      .delete()
-      .from(table)
-      .where(identifiers);
-
-    return this.runQuery(query.getQuery());
-  }
-
   close() {
     return this.con.end();
   }
-
-  /* Helper functions */
 
   runQuery({ string, values }) {
     return new Promise((resolve, reject) => {
