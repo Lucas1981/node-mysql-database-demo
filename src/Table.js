@@ -10,11 +10,13 @@ const all = '*';
 class Table {
   constructor(table, db) {
     this.db = db;
+    /* Best to add the SimpleQueryBuilder as a member to make it available for extended classes*/
+    this.SimpleQueryBuilder = SimpleQueryBuilder;
     this.table = table;
   }
 
   create(values) {
-    const query = new SimpleQueryBuilder()
+    const query = new this.SimpleQueryBuilder()
       .insert()
       .into(this.table)
       .set(values);
@@ -23,7 +25,7 @@ class Table {
   }
 
   read({ columns = '*', identifiers = 1 } = { columns: '*', identifiers: 1}) {
-    const query = new SimpleQueryBuilder()
+    const query = new this.SimpleQueryBuilder()
       .select(columns)
       .from(this.table)
       .where(identifiers);
@@ -32,7 +34,7 @@ class Table {
   }
 
   update(identifiers, values) {
-    const query = new SimpleQueryBuilder()
+    const query = new this.SimpleQueryBuilder()
       .update(this.table)
       .set(values)
       .where(identifiers);
@@ -41,7 +43,9 @@ class Table {
   }
 
   delete(identifiers) {
-    const query = new SimpleQueryBuilder()
+    console.log('Before we choke');
+    console.log(identifiers);
+    const query = new this.SimpleQueryBuilder()
       .delete()
       .from(this.table)
       .where(identifiers);
